@@ -11,12 +11,12 @@
 		}
 
 		public function checkPostFieldData($data, &$message, $entry_id = NULL) {
-			if (is_array($data) and isset($data['name'])) $data['name'] = self::getUniqueFilename($data['name']);
+			if (is_array($data) and isset($data['name'])) $data['name'] = self::getUniqueFilename($data['name'], $entry_id);
 			return parent::checkPostFieldData($data, $message, $entry_id);
 		}
 
 		public function processRawFieldData($data, &$status, &$message = NULL, $simulate = false, $entry_id = NULL) {
-			if (is_array($data) and isset($data['name'])) $data['name'] = self::getUniqueFilename($data['name']);
+			if (is_array($data) and isset($data['name'])) $data['name'] = self::getUniqueFilename($data['name'], $entry_id);
 			return parent::processRawFieldData($data, $status, $message, $simulate, $entry_id);
 		}
 
@@ -27,8 +27,9 @@
 				end($field)->appendChild(new XMLElement('clean-filename', General::sanitize(self::getCleanFilename(basename($data['file'])))));
 		}
 
-		private static function getUniqueFilename($filename) {
-			return preg_replace("/([^\/]*)(\.[^\.]+)$/e", "uniqid().'$2'", $filename);
+		private static function getUniqueFilename($filename, $entry_id=NULL) {
+			$result = $entry_id . '_' . uniqid() . '.' . pathinfo($filename, PATHINFO_EXTENSION);
+			return $result;
 		}
 
 		private static function getCleanFilename($filename) {
